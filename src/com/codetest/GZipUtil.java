@@ -6,8 +6,17 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+/**
+ * Utility class for gunzipping and gzipping the source log files
+ */
 public class GZipUtil {
 
+    /**
+     * Decompresses the original source file, and writes to a new temp file
+     *
+     * @param gzipFile - Filename for the original source file
+     * @param newFile - Filename for the uncompressed temp file
+     */
     protected static void decompressGzipFile(String gzipFile, String newFile) {
         try {
             FileInputStream fis = new FileInputStream(gzipFile);
@@ -27,9 +36,15 @@ public class GZipUtil {
 
     }
 
-    protected static void compressGzipFile(String file, String gzipFile) {
+    /**
+     * Used to compresses the redacted temp file
+     *
+     * @param redactedTextFileName - Filename for uncompressed temp file
+     * @param gzipFile - Filename for the compressed and redacted file
+     */
+    protected static void compressGzipFile(String redactedTextFileName, String gzipFile) {
         try {
-            FileInputStream fis = new FileInputStream(file);
+            FileInputStream fis = new FileInputStream(redactedTextFileName);
             FileOutputStream fos = new FileOutputStream(gzipFile);
             GZIPOutputStream gzipOS = new GZIPOutputStream(fos);
             byte[] buffer = new byte[1024];
