@@ -85,13 +85,12 @@ public class LogRedaction {
      * Processes the original log file, and redacts any Social Security or Credit Card informtaion in a new newly created file
      */
     public void processLogFile() throws IOException {
-        List<String> file = new ArrayList();
-
         //gunzip the original log file
         zipOrUnzipFile(false);
 
         FileReader input = new FileReader(tempLogFileName);
         BufferedReader in = new BufferedReader(input);
+        List<String> file = new ArrayList();
         int numberOfLinesProcessed = 0;
         int numberOfLinesRedacted = 0;
         String myLine;
@@ -100,7 +99,7 @@ public class LogRedaction {
         {
             numberOfLinesProcessed++;
 
-            //if the line from the origial file does not contain sensitive information, write it to the new file
+            //if the line from the original file does not contain sensitive information, write it to the new file
             if (!myLine.contains("SSN") && !myLine.contains("CC")) {
                 file.add(myLine);
             }
@@ -149,7 +148,6 @@ public class LogRedaction {
 
         //Write to Audit Log
         writeToAuditLog(oringinalLogFileName, pathToLogs, numberOfLinesProcessed, numberOfLinesRedacted);
-
     }
 
 }
