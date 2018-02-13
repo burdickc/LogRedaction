@@ -2,7 +2,7 @@
 
 ## Description: 
 
-This utility accepts as input one or more text log files that have been compressed with the gzip algorithm. The user is prompted to provide the path to the directory containing the orginial log files.  The utility will redact social security, and credit card information from the original log files, as well as write redacted, gzipped versions of the files to the same directory.  An audit log file is created in the original directory that includes a timestamp indicating when the file was processed, the name of each file processed, a count of the total number of lines processed in each log file, and a count of the total number of lines redacted from each log file.
+This utility accepts as input one or more text log files that have been compressed with the gzip algorithm. The user is prompted to provide the path to the directory containing the orginial log files.  The utility will redact social security, and credit card information from the original log files, as well as write redacted, gzipped versions of the files to the same directory.  The utility will preserve the original log file metadata / file permissions, group, and owner and persist them to the new files. An audit log file is created in the original directory that includes a timestamp indicating when the file was processed, the name of each file processed, a count of the total number of lines processed in each log file, and a count of the total number of lines redacted from each log file.
 
 ### Build Instructions:
 
