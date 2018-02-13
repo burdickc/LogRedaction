@@ -20,6 +20,6 @@ This utility accepts as input one or more text log files that have been compress
 
 - The user will be prompted to enter a path to the directory containing the original gzipped log files.
 
-- Provide a path to the logs directory on the system and press enter. For example: **/Users/test.user/Downloads/logs**
+- Provide the full path to the logs directory on the system and press enter. For example: **/Users/test.user/Downloads/logs**
 
 - The redacted log files, and audit log will be written to the provided directory.
