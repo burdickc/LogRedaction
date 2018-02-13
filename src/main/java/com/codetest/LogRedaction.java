@@ -1,6 +1,11 @@
 package com.codetest;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,6 +86,31 @@ public class LogRedaction {
         }
     }
 
+    private void preserveFileMetadataAndPermissions(String oringinalLogFileName, String newGzipFile) throws IOException {
+        Path originalFilePath = Paths.get(oringinalLogFileName);
+        Path newFilePath = Paths.get(newGzipFile);
+        BasicFileAttributes bfa = Files.readAttributes(originalFilePath, BasicFileAttributes.class);
+        
+        Files.setAttribute(newFilePath, "basic:creationTime", bfa.creationTime());
+        Files.setAttribute(newFilePath, "basic:lastAccessTime", bfa.lastAccessTime());
+        Files.setAttribute(newFilePath, "basic:lastModifiedTime", bfa.lastModifiedTime());
+
+        File orginalFile = new File(oringinalLogFileName);
+        File newFile = new File(newGzipFile);
+        if(orginalFile.exists() && newFile.exists()){
+
+            newFile.setExecutable(orginalFile.canExecute());
+            newFile.setWritable(orginalFile.canWrite());
+            newFile.setReadable(orginalFile.canRead());
+
+            GroupPrincipal group = Files.readAttributes(originalFilePath, PosixFileAttributes.class, LinkOption.NOFOLLOW_LINKS).group();
+            UserPrincipal owner =  Files.readAttributes(originalFilePath, PosixFileAttributes.class, LinkOption.NOFOLLOW_LINKS).owner();
+            Files.getFileAttributeView(newFilePath, PosixFileAttributeView.class, LinkOption.NOFOLLOW_LINKS).setGroup(group);
+            Files.getFileAttributeView(newFilePath, PosixFileAttributeView.class, LinkOption.NOFOLLOW_LINKS).setOwner(owner);
+        }
+    }
+
+
     /**
      * Processes the original log file, and redacts any Social Security or Credit Card informtaion in a new newly created file
      */
@@ -144,6 +174,7 @@ public class LogRedaction {
 
         //GZip the redacted log file and clean up temp files
         zipOrUnzipFile(true);
+        preserveFileMetadataAndPermissions(oringinalLogFileName, newGzipFile);
         cleanupTempFiles();
 
         //Write to Audit Log
