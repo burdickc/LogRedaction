@@ -9,7 +9,7 @@ public class Main {
 
         // create a scanner to read the command-line input, to obtain the path to the logs directory
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Please enter the path to the logs directory: ");
+        System.out.print("\nPlease enter the path to the logs directory: ");
         String pathToLogs = scanner.next();
 
         File dir = new File(pathToLogs);
@@ -38,6 +38,6 @@ public class Main {
                 }
             }
         }
-        System.out.println("Log Redaction Complete\n");
+        System.out.println("\nLog Redaction Complete\n");
     }
 }
