@@ -13,17 +13,17 @@ import java.util.List;
 
 public class LogRedaction {
 
-    private String oringinalLogFileName;
+    private String originalLogFileName;
     private String tempLogFileName;
     private String redactedTextFileName;
     private String newGzipFile;
     private String pathToLogs;
 
-    public LogRedaction (String oringinalLogFileName, String pathToLogs) {
-        this.oringinalLogFileName = oringinalLogFileName;
-        tempLogFileName = oringinalLogFileName.substring(0, oringinalLogFileName.length()-3) + ".tmp";
-        redactedTextFileName = oringinalLogFileName.substring(0, oringinalLogFileName.length()-3) + ".redacted";
-        newGzipFile = oringinalLogFileName.substring(0, oringinalLogFileName.length()-3) + ".redacted.gz";
+    public LogRedaction (String originalLogFileName, String pathToLogs) {
+        this.originalLogFileName = originalLogFileName;
+        tempLogFileName = originalLogFileName.substring(0, originalLogFileName.length()-3) + ".tmp";
+        redactedTextFileName = originalLogFileName.substring(0, originalLogFileName.length()-3) + ".redacted";
+        newGzipFile = originalLogFileName.substring(0, originalLogFileName.length()-3) + ".redacted.gz";
         this.pathToLogs = pathToLogs;
     }
 
@@ -37,7 +37,7 @@ public class LogRedaction {
             GZipUtil.compressGzipFile(redactedTextFileName, newGzipFile);
         }
         else {
-            GZipUtil.decompressGzipFile(oringinalLogFileName, tempLogFileName);
+            GZipUtil.decompressGzipFile(originalLogFileName, tempLogFileName);
         }
     }
 
@@ -54,19 +54,18 @@ public class LogRedaction {
     /**
      * Creates new Audit Log file to track the redaction information. Add to the existing log if it exists
      *
-     * @param oringinalLogFileName - Name of the original log file
+     * @param originalLogFileName - Name of the original log file
      * @param pathToLogs - Path to the log files
      * @param numberOfLinesProcessed - Number of lines processed in the original log file
      * @param numberOfLinesRedacted - Number of lines modified in the redacted file
      */
-    private void writeToAuditLog(String oringinalLogFileName, String pathToLogs, int numberOfLinesProcessed, int numberOfLinesRedacted) {
+    private void writeToAuditLog(String originalLogFileName, String pathToLogs, int numberOfLinesProcessed, int numberOfLinesRedacted) {
         File file = new File(pathToLogs + "/audit-log.txt");
         try {
             //Check for an existing Audit Log file
             if (!file.exists()) {
                 file.createNewFile();
             }
-
             //Write to the audit log file
             FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
             BufferedWriter bw = new BufferedWriter(fw);
@@ -74,7 +73,7 @@ public class LogRedaction {
             {
                 String timeStamp = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z").format(new Date());
                 out.println("Timestamp: " + timeStamp +
-                        "  |  Modified Filename: " + oringinalLogFileName +
+                        "  |  Modified Filename: " + originalLogFileName +
                         "  |  Number of Lines Processed: " + numberOfLinesProcessed +
                         "  |  Number of Lines Redacted: " + numberOfLinesRedacted);
 
@@ -90,11 +89,11 @@ public class LogRedaction {
      * Preserves the original log file metadata / file permissions, group, and owner.
      * Persists these attributes to the redacted log file
      *
-     * @param oringinalLogFileName - Name of the original log file
+     * @param originalLogFileName - Name of the original log file
      * @param newGzipFile - Name of the newly created, redacted and gzipped log file
      */
-    private void preserveFileMetadataAndPermissions(String oringinalLogFileName, String newGzipFile) throws IOException {
-        Path originalFilePath = Paths.get(oringinalLogFileName);    //get the paths to the original and redacted files
+    private void preserveFileMetadataAndPermissions(String originalLogFileName, String newGzipFile) throws IOException {
+        Path originalFilePath = Paths.get(originalLogFileName);    //get the paths to the original and redacted files
         Path newFilePath = Paths.get(newGzipFile);
         BasicFileAttributes bfa = Files.readAttributes(originalFilePath, BasicFileAttributes.class);
 
@@ -103,7 +102,7 @@ public class LogRedaction {
         Files.setAttribute(newFilePath, "basic:lastAccessTime", bfa.lastAccessTime());
         Files.setAttribute(newFilePath, "basic:lastModifiedTime", bfa.lastModifiedTime());
 
-        File orginalFile = new File(oringinalLogFileName);
+        File orginalFile = new File(originalLogFileName);
         File newFile = new File(newGzipFile);
         if(orginalFile.exists() && newFile.exists()){
 
@@ -183,10 +182,10 @@ public class LogRedaction {
 
         //GZip the redacted log file and clean up temp files
         zipOrUnzipFile(true);
-        preserveFileMetadataAndPermissions(oringinalLogFileName, newGzipFile);
+        preserveFileMetadataAndPermissions(originalLogFileName, newGzipFile);
         cleanupTempFiles();
 
         //Write to Audit Log
-        writeToAuditLog(oringinalLogFileName, pathToLogs, numberOfLinesProcessed, numberOfLinesRedacted);
+        writeToAuditLog(originalLogFileName, pathToLogs, numberOfLinesProcessed, numberOfLinesRedacted);
     }
 }

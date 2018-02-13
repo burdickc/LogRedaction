@@ -7,11 +7,10 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
 
-        // create a scanner to read the command-line input
+        // create a scanner to read the command-line input, to obtain the path to the logs directory
         Scanner scanner = new Scanner(System.in);
         System.out.print("Please enter the path to the logs directory: ");
         String pathToLogs = scanner.next();
-        
 
         File dir = new File(pathToLogs);
         File[] directoryListing = dir.listFiles();
@@ -37,7 +36,6 @@ public class Main {
                         ioe.printStackTrace();
                     }
                 }
-
             }
         }
         System.out.println("Log Redaction Complete");
