@@ -8,18 +8,18 @@ This utility accepts as input one or more text log files that have been compress
 
 - Clone the repository using: https://github.com/burdickc/LogRedaction.git
 
-- Change directory, to the root directory of the project: 'cd LogRedaction/'
+- Change directory, to the root directory of the project: **cd LogRedaction/**
 
-- In this directory there is a pom.xml. Build using maven: 'mvn clean package'
+- In this directory there is a pom.xml. Build using maven: **mvn clean package**
 
 ### Usage Instructions
 
-- Navigate to the newly created target directory: 'cd target/'
+- Navigate to the newly created target directory: **cd target/**
 
-- Run the jar using the following command: 'java -jar LogRedaction-1.0-SNAPSHOT.jar'
+- Run the jar using the following command: **java -jar LogRedaction-1.0-SNAPSHOT.jar**
 
 - The user will be prompted to enter a path to the directory containing the original gzipped log files.
 
-- Provide a path to the logs directory and press enter. For example: /Users/test.user/Downloads/logs
+- Provide a path to the logs directory on the system and press enter. For example: **/Users/test.user/Downloads/logs**
 
 - The redacted log files, and audit log will be written to the provided directory.
