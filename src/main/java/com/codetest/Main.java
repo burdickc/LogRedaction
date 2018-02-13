@@ -38,6 +38,6 @@ public class Main {
                 }
             }
         }
-        System.out.println("Log Redaction Complete");
+        System.out.println("Log Redaction Complete\n");
     }
 }
