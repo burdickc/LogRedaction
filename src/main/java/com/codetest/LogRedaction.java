@@ -54,7 +54,7 @@ public class LogRedaction {
     /**
      * Creates new Audit Log file to track the redaction information. Add to the existing log if it exists
      *
-     * @param oringinalLogFileName - Name of the redacted file
+     * @param oringinalLogFileName - Name of the original log file
      * @param pathToLogs - Path to the log files
      * @param numberOfLinesProcessed - Number of lines processed in the original log file
      * @param numberOfLinesRedacted - Number of lines modified in the redacted file
@@ -86,11 +86,19 @@ public class LogRedaction {
         }
     }
 
+    /**
+     * Preserves the original log file metadata / file permissions, group, and owner.
+     * Persists these attributes to the redacted log file
+     *
+     * @param oringinalLogFileName - Name of the original log file
+     * @param newGzipFile - Name of the newly created, redacted and gzipped log file
+     */
     private void preserveFileMetadataAndPermissions(String oringinalLogFileName, String newGzipFile) throws IOException {
-        Path originalFilePath = Paths.get(oringinalLogFileName);
+        Path originalFilePath = Paths.get(oringinalLogFileName);    //get the paths to the original and redacted files
         Path newFilePath = Paths.get(newGzipFile);
         BasicFileAttributes bfa = Files.readAttributes(originalFilePath, BasicFileAttributes.class);
-        
+
+        //set the metadata of the redacted file to match the original log file
         Files.setAttribute(newFilePath, "basic:creationTime", bfa.creationTime());
         Files.setAttribute(newFilePath, "basic:lastAccessTime", bfa.lastAccessTime());
         Files.setAttribute(newFilePath, "basic:lastModifiedTime", bfa.lastModifiedTime());
@@ -99,17 +107,18 @@ public class LogRedaction {
         File newFile = new File(newGzipFile);
         if(orginalFile.exists() && newFile.exists()){
 
+            //set the permissions to match the original log file
             newFile.setExecutable(orginalFile.canExecute());
             newFile.setWritable(orginalFile.canWrite());
             newFile.setReadable(orginalFile.canRead());
 
+            //set the group / owner of the new file to match the original log file
             GroupPrincipal group = Files.readAttributes(originalFilePath, PosixFileAttributes.class, LinkOption.NOFOLLOW_LINKS).group();
             UserPrincipal owner =  Files.readAttributes(originalFilePath, PosixFileAttributes.class, LinkOption.NOFOLLOW_LINKS).owner();
             Files.getFileAttributeView(newFilePath, PosixFileAttributeView.class, LinkOption.NOFOLLOW_LINKS).setGroup(group);
             Files.getFileAttributeView(newFilePath, PosixFileAttributeView.class, LinkOption.NOFOLLOW_LINKS).setOwner(owner);
         }
     }
-
 
     /**
      * Processes the original log file, and redacts any Social Security or Credit Card informtaion in a new newly created file
@@ -180,5 +189,4 @@ public class LogRedaction {
         //Write to Audit Log
         writeToAuditLog(oringinalLogFileName, pathToLogs, numberOfLinesProcessed, numberOfLinesRedacted);
     }
-
 }
