@@ -6,7 +6,7 @@ This utility accepts as input one or more text log files that have been compress
 
 ### Build Instructions:
 
-- Clone the repository using: https://github.com/burdickc/LogRedaction.git
+- Clone the repository using: **git clone https://github.com/burdickc/LogRedaction.git**
 
 - Change directory, to the root directory of the project: **cd LogRedaction/**
 
